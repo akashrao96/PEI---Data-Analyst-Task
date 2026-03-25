@@ -17,3 +17,26 @@
 | 3        | Monitor  | 12000  | 239         |
 | 4        | Keyboard | 400    | 153         |
 | 5        | Mousepad | 250    | 153         |
+
+# Shipping Table (Top 5 Rows)
+
+| Shipping_ID | Status    | Customer_ID |
+| ----------- | --------- | ----------- |
+| 1           | Pending   | 173         |
+| 2           | Pending   | 155         |
+| 3           | Delivered | 242         |
+| 4           | Pending   | 223         |
+| 5           | Delivered | 72          |
+
+
+
+**1. Data Validation (Accuracy, Completeness, Reliability)**
+Key Findings from Source Data
+A. Shipping Data Issues (from JSON)
+Duplicate Customer_IDs → one customer has multiple shipments (valid but needs relationship clarity)
+No Order_ID linkage → cannot directly map shipment to order ❗ (major data gap)
+Status values are consistent: Pending / Delivered ✅
+No missing values observed in sample
+
+
+
