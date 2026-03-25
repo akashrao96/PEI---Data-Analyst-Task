@@ -1,4 +1,4 @@
-# PEI---Data-Analyst-Task
+# PEI - Data Analyst Task
 
 The sales team has the following data from various sources which you have to download from the below drive
 
