@@ -19,9 +19,13 @@ Prepare a story with technical specifications for one part of the data model for
 
 These reporting requirements should be enabled based on the Data Analyst tasks above. The task is not to create the reports but to enable it.
 
-  1.the total amount spent and the country for the Pending delivery status for each country.
+  1.the total amount spent and the country for the Pending delivery status for each country.  
+  
   2.the total number of transactions, total quantity sold, and total amount spent for each customer, along with the product details.
+  
   3.the maximum product purchased for each country.
+  
   4.the most purchased product based on the age category less than 30 and above 30.
+  
   5.the country that had minimum transactions and sales amount.
 
