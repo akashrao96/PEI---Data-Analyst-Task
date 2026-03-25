@@ -38,7 +38,7 @@ A. Shipping Data Issues (from Shipping.json)
 
 - Duplicate Customer_IDs → one customer has multiple shipments 
 - No Order_ID linkage → cannot directly map shipment to order (major data gap)
-- Status values are consistent: Pending / Delivered ✅
+- Status values are consistent: Pending / Delivered
 - No missing values observed in sample
 - Total rows count : 250
 
