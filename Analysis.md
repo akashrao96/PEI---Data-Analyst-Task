@@ -84,7 +84,7 @@ WHERE amount <= 0;
  
 Fact Table: 
 
-fact_orders (
+fact_sales (
  order_id,
  customer_id,
  product_id,
@@ -102,6 +102,7 @@ customer_id (PK),
 dim_product (To be Created) (product_id (PK),
  product_name,
  category)
+
  
 dim_shipping(
  shipping_id (PK),
@@ -109,5 +110,58 @@ dim_shipping(
  order_id (to be added),
  status)
 
+# Relationships
+fact_sales → dim_customer (customer_id)
+fact_sales → dim_product (product_id)
+fact_sales → dim_country (country_id)
 
+
+# 3. Data Engineer Story (Technical Specification)
+
+- Create a clean, transformed fact_sales table to support business reporting.
+
+# Source Tables:
+- raw_sales
+- raw_customers
+- raw_products
+
+Transformations:
+
+1. Data Cleaning
+- Remove duplicates based on order_id
+- Filter invalid records: price > 0
+  
+2. Standardization
+- Convert delivery_status to uppercase : UPPER(delivery_status)
+   
+3. Age Group Logic :
+```SQL
+CASE 
+    WHEN age < 30 THEN '<30'
+    ELSE '30+'
+END AS age_group
+```
+
+4. Final Table Creation :
+```SQL
+CREATE TABLE fact_sales AS
+SELECT 
+    s.order_id,
+    c.customer_id,
+    p.product_id,
+    c.country_id,
+    s.amount,
+    UPPER(s.delivery_status) AS delivery_status,
+    s.order_date
+FROM raw_sales s
+JOIN raw_customers c ON s.customer_id = c.customer_id
+JOIN raw_products p ON s.product_id = p.product_id;
+```
+
+# QA Test Cases
+- No duplicate order_id
+- No null customer_id/product_id
+- amount = quantity * price
+- delivery_status only contains valid values (PENDING, DELIVERED)
+- Age group correctly assigned
 
