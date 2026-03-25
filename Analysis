@@ -30,13 +30,32 @@
 
 
 
-**1. Data Validation (Accuracy, Completeness, Reliability)**
-Key Findings from Source Data
-A. Shipping Data Issues (from JSON)
-Duplicate Customer_IDs → one customer has multiple shipments (valid but needs relationship clarity)
-No Order_ID linkage → cannot directly map shipment to order ❗ (major data gap)
-Status values are consistent: Pending / Delivered ✅
-No missing values observed in sample
+1. Data Validation (Accuracy, Completeness, Reliability)
+
+Key Findings from Source Data are : 
+
+A. Shipping Data Issues (from Shipping.json)
+
+- Duplicate Customer_IDs → one customer has multiple shipments 
+- No Order_ID linkage → cannot directly map shipment to order (major data gap)
+- Status values are consistent: Pending / Delivered ✅
+- No missing values observed in sample
+- Total rows count : 250
+
+
+B. Customer Table Checks (from Customer.csv)
+
+-- Check nulls
+SELECT COUNT(*) 
+FROM Customer
+WHERE customer_id IS NULL OR country IS NULL OR age IS NULL;
+
+-- Check duplicates
+SELECT customer_id, COUNT(*)
+FROM Customer
+GROUP BY customer_id
+HAVING COUNT(*) > 1;
+
 
 
 
