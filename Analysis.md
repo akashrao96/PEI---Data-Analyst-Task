@@ -62,7 +62,7 @@ GROUP BY customer_id
 HAVING COUNT(*) > 1;
 ```
 
-B. Order Table Checks (from Order.csv)
+C. Order Table Checks (from Order.csv)
 ```SQL
 SELECT count(*) from Order
 --250
