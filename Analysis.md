@@ -128,8 +128,11 @@ year)
 
 # Relationships
 fact_sales → dim_customer (customer_id)
+
 fact_sales → dim_product (product_id)
+
 fact_sales → dim_country (country_id)
+
 fact_sales → dim_shipping (shipping_id)
 
 
@@ -171,7 +174,7 @@ SELECT
     c.country_id,
     s.quantity,
     s.quantity * p.price AS amount,
-    UPPER(s.delivery_status) AS delivery_status,
+    UPPER(h.delivery_status) AS delivery_status,
     s.order_date
 FROM raw_sales s
 JOIN raw_customers c ON s.customer_id = c.customer_id
