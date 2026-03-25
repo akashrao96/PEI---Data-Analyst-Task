@@ -79,4 +79,35 @@ FROM Orders
 WHERE amount <= 0;
 ```
 
+# 2. Proposed Data Model (Domain Model)
+ Recommended : Star Schema
+ 
+Fact Table: 
+
+fact_orders (
+ order_id,
+ customer_id,
+ product_id,
+ amount,
+ order_date)
+
+Dimension Tables:
+
+dim_customer(
+customer_id (PK),
+ age,
+ age_group (Derived: <30, 30+),
+ country)
+ 
+dim_product (To be Created) (product_id (PK),
+ product_name,
+ category)
+ 
+dim_shipping(
+ shipping_id (PK),
+ customer_id,
+ order_id (to be added),
+ status)
+
+
 
