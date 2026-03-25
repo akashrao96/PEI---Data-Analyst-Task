@@ -118,7 +118,7 @@ fact_sales → dim_country (country_id)
 
 # 3. Data Engineer Story (Technical Specification)
 
-- Create a clean, transformed fact_sales table to support business reporting.
+- Fix Shipping Table & Build Fact Table
 
 # Source Tables:
 - raw_sales
@@ -146,22 +146,96 @@ END AS age_group
 ```SQL
 CREATE TABLE fact_sales AS
 SELECT 
-    s.order_id,
-    c.customer_id,
-    p.product_id,
-    c.country_id,
-    s.amount,
-    UPPER(s.delivery_status) AS delivery_status,
-    s.order_date
-FROM raw_sales s
-JOIN raw_customers c ON s.customer_id = c.customer_id
-JOIN raw_products p ON s.product_id = p.product_id;
+    o.order_id,
+    o.customer_id,
+    o.product_id,
+    c.country,
+    c.age,
+    o.quantity,
+    o.price,
+    o.quantity * o.price AS amount,
+    s.status
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+JOIN shipping s ON o.order_id = s.order_id;
 ```
 
 # QA Test Cases
-- No duplicate order_id
-- No null customer_id/product_id
-- amount = quantity * price
-- delivery_status only contains valid values (PENDING, DELIVERED)
-- Age group correctly assigned
+- No missing joins
+- Status only Pending/Delivered
+- All orders mapped to shipping
 
+
+# 1. Total Amount for Pending Delivery by Country
+```SQL
+SELECT 
+    c.country,
+    SUM(o.amount) AS total_amount
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+JOIN shipping s ON o.order_id = s.order_id
+WHERE s.status = 'Pending'
+GROUP BY c.country;
+```
+
+
+# 2. Customer-Level Summary
+```SQL
+SELECT 
+    c.customer_id,
+    COUNT(o.order_id) AS total_transactions,
+    SUM(o.quantity) AS total_qty,
+    SUM(o.amount) AS total_spent
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+GROUP BY c.customer_id;
+```
+
+# 3. Max Product per Country
+```SQL
+SELECT country, product_id
+FROM (
+    SELECT 
+        c.country,
+        o.product_id,
+        SUM(o.quantity) AS qty,
+        RANK() OVER (PARTITION BY c.country ORDER BY SUM(o.quantity) DESC) rnk
+    FROM orders o
+    JOIN customers c ON o.customer_id = c.customer_id
+    GROUP BY c.country, o.product_id
+) t
+WHERE rnk = 1;
+```
+
+# 4. Most Purchased Product by Age Group
+```SQL
+SELECT age_group, product_id
+FROM (
+    SELECT 
+        CASE WHEN age < 30 THEN '<30' ELSE '30+' END AS age_group,
+        o.product_id,
+        SUM(o.quantity) qty,
+        RANK() OVER (PARTITION BY CASE WHEN age < 30 THEN '<30' ELSE '30+' END 
+                     ORDER BY SUM(o.quantity) DESC) rnk
+    FROM orders o
+    JOIN customers c ON o.customer_id = c.customer_id
+    GROUP BY age_group, o.product_id
+) t
+WHERE rnk = 1;
+```
+
+# 5. Country with Minimum Transactions
+```SQL
+SELECT country
+FROM (
+    SELECT 
+        c.country,
+        COUNT(o.order_id) transactions,
+        SUM(o.amount) total_sales
+    FROM orders o
+    JOIN customers c ON o.customer_id = c.customer_id
+    GROUP BY c.country
+) t
+ORDER BY transactions, total_sales
+LIMIT 1;
+```
