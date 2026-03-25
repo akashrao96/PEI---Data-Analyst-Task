@@ -1,4 +1,4 @@
-# Customer Table (Top 5 Rows)
+ Customer Table (Top 5 Rows)
 
 | Customer_ID | First   | Last    | Age | Country |
 | ----------- | ------- | ------- | --- | ------- |
@@ -8,7 +8,7 @@
 | 4           | Eric    | Carter  | 38  | UK      |
 | 5           | William | Jackson | 58  | UAE     |
 
-# Orders Table (Top 5 Rows)
+ Orders Table (Top 5 Rows)
 
 | Order_ID | Item     | Amount | Customer_ID |
 | -------- | -------- | ------ | ----------- |
@@ -18,7 +18,7 @@
 | 4        | Keyboard | 400    | 153         |
 | 5        | Mousepad | 250    | 153         |
 
-# Shipping Table (Top 5 Rows)
+ Shipping Table (Top 5 Rows)
 
 | Shipping_ID | Status    | Customer_ID |
 | ----------- | --------- | ----------- |
@@ -30,7 +30,7 @@
 
 
 
-1. Data Validation (Accuracy, Completeness, Reliability)
+# 1. Data Validation (Accuracy, Completeness, Reliability)
 
 Key Findings from Source Data are : 
 
@@ -44,18 +44,39 @@ A. Shipping Data Issues (from Shipping.json)
 
 
 B. Customer Table Checks (from Customer.csv)
+```SQL
+--Total Rows
+SELECT count(*) from Customer
+--250
 
 -- Check nulls
 SELECT COUNT(*) 
 FROM Customer
 WHERE customer_id IS NULL OR country IS NULL OR age IS NULL;
 
+
 -- Check duplicates
 SELECT customer_id, COUNT(*)
 FROM Customer
 GROUP BY customer_id
 HAVING COUNT(*) > 1;
+```
 
+B. Order Table Checks (from Order.csv)
+```SQL
+SELECT count(*) from Order
+--250
 
+-- Check no matching customer
+SELECT o.customer_id
+FROM Orders o
+LEFT JOIN Customer c ON o.customer_id = c.customer_id
+WHERE c.customer_id IS NULL;
+
+-- Check negative or invalid values
+SELECT *
+FROM Orders
+WHERE amount <= 0;
+```
 
 
